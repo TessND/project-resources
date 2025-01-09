@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Главная</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Включаем шапку -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="container mt-5">
+        <h1>Добро пожаловать на главную страницу!</h1>
+        <p>Эта страница доступна всем пользователям.</p>
+        <a th:href="@{/login}" class="btn btn-primary">Войти</a>
+        <a th:href="@{/register}" class="btn btn-secondary">Зарегистрироваться</a>
+    </div>
+</body>
+</html>
