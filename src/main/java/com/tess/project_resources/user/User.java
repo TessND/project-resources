@@ -5,8 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.tess.project_resources.project.Project;
 import com.tess.project_resources.user.role.Role;
 
 import java.time.LocalDateTime;
@@ -52,7 +55,9 @@ public class User {
     )
     private List<Role> roles = new ArrayList<>();
 
-    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE) // Каскадное удаление проектов
+    private List<Project> projects;
 
     // Метод для добавления роли
     public void addRole(Role role) {
