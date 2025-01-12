@@ -9,11 +9,21 @@
     <!-- Шапка -->
     <nav class="navbar navbar-light bg-light" th:fragment="header">
         <div class="container-fluid">
+            <!-- Ссылки на страницы -->
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" th:href="@{/}">Домашняя страница</a>
+                <a class="nav-link" th:href="@{/projects}">Список проектов</a>
+                <a class="nav-link" th:href="@{/forum}">Форум</a>
+            </div>
+
             <!-- Имя пользователя и кнопка выхода -->
             <div sec:authorize="isAuthenticated()">
                 <span class="navbar-text me-3">
                     <span sec:authentication="name"></span>
                 </span>
+                <form th:action="@{/projects/generate-statistics}" method="post" class="d-inline me-2">
+                    <button type="submit" class="btn btn-primary">Сгенерировать статистику</button>
+                </form>
                 <form th:action="@{/logout}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-danger">Выйти</button>
                 </form>

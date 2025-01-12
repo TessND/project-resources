@@ -281,25 +281,89 @@ public class ProjectController {
         return "redirect:/projects/" + projectId; // Redirect back to the project details page
     }
 
-    @PostMapping("/comments/{commentId}/delete")
+    /**
+     * Удаляет комментарий.
+     */
+    @PostMapping("/{projectId}/comments/delete/{commentId}")
     public String deleteComment(
+            @PathVariable Long projectId,
             @PathVariable Long commentId,
             Principal principal) {
+        // Проверяем, является ли текущий пользователь автором комментария
         String username = principal.getName();
-        User user = userService.findByUsername(username)
+        User currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-        // Используем метод getCommentById для поиска комментария
         Comment comment = commentService.getCommentById(commentId);
-
-        // Проверяем, является ли текущий пользователь автором комментария
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы не можете удалить этот комментарий");
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Вы не можете удалить этот комментарий");
         }
 
         // Удаляем комментарий
         commentService.deleteComment(commentId);
-        return "redirect:/projects/" + comment.getProject().getId(); // Перенаправляем обратно на страницу проекта
+        return "redirect:/projects/" + projectId;
+    }
+
+    /**
+     * Отображает форму редактирования комментария.
+     */
+    @GetMapping("/{projectId}/comments/edit/{commentId}")
+    public String showEditCommentForm(
+            @PathVariable Long projectId,
+            @PathVariable Long commentId,
+            Principal principal,
+            Model model) {
+        Comment comment = commentService.getCommentById(commentId);
+
+        // Проверяем, является ли текущий пользователь автором комментария
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Вы не можете редактировать этот комментарий");
+        }
+
+        // Создаем DTO для редактирования
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setText(comment.getText());
+
+        // Передаем объект в модель
+        model.addAttribute("commentDTO", commentDTO);
+        model.addAttribute("comment", comment);
+        return "edit-comment";
+    }
+
+    /**
+     * Обрабатывает редактирование комментария.
+     */
+    @PostMapping("/{projectId}/comments/edit/{commentId}")
+    public String editComment(
+            @PathVariable Long projectId,
+            @PathVariable Long commentId,
+            @Valid @ModelAttribute("commentDTO") CommentDTO commentDTO,
+            BindingResult bindingResult,
+            Principal principal,
+            Model model) {
+        // Проверяем ошибки валидации
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errors", bindingResult.getAllErrors());
+            return "edit-comment";
+        }
+
+        // Проверяем, является ли текущий пользователь автором комментария
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        Comment comment = commentService.getCommentById(commentId);
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Вы не можете редактировать этот комментарий");
+        }
+
+        // Редактируем комментарий
+        commentService.updateComment(commentId, commentDTO);
+        return "redirect:/projects/" + projectId;
     }
 
 }

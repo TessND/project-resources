@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${thread.title}">Детали треда</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 th:text="${thread.title}">Детали треда</h1>
+        <p th:text="${thread.description}">Описание треда</p>
+
+        <!-- Сообщения в треде -->
+        <div class="mb-4">
+            <h3>Сообщения</h3>
+            <div th:if="${messages != null and !messages.isEmpty()}">
+                <ul class="list-group">
+                    <li th:each="message : ${messages}" class="list-group-item">
+                        <p th:text="${message.text}"></p>
+                        <small>
+                            Автор: <span th:text="${message.user.username}"></span> |
+                            Дата: <span th:text="${#temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                        </small>
+
+                        <!-- Кнопки редактирования и удаления (только для автора сообщения) -->
+                        <div sec:authorize="isAuthenticated()">
+                            <div th:if="${message.user.username == #authentication.principal.username}">
+                                <a
+                                    th:href="@{/forum/messages/edit/{messageId}(messageId=${message.id})}"
+                                    class="btn btn-warning btn-sm"
+                                >
+                                    Редактировать
+                                </a>
+                                <form
+                                    th:action="@{/forum/messages/delete/{messageId}(messageId=${message.id})}"
+                                    method="post"
+                                    class="d-inline"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Вы уверены, что хотите удалить это сообщение?')"
+                                    >
+                                        Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div th:if="${messages == null || messages.isEmpty()}">
+                <p>Сообщений пока нет.</p>
+            </div>
+        </div>
+
+        <!-- Форма для добавления нового сообщения -->
+        <div>
+            <h3>Добавить сообщение</h3>
+
+            <!-- Отображение ошибок валидации -->
+            <div th:if="${errors != null}" class="alert alert-danger" role="alert">
+                <ul>
+                    <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                </ul>
+            </div>
+
+            <form th:action="@{/forum/messages/create}" method="post" th:object="${messageDTO}">
+                <!-- Скрытое поле для передачи ID треда -->
+                <input type="hidden" name="threadId" th:value="${thread.id}" />
+
+                <div class="mb-3">
+                    <label for="text" class="form-label">Текст сообщения</label>
+                    <textarea
+                        id="text"
+                        class="form-control"
+                        th:field="*{text}"
+                        placeholder="Введите ваше сообщение..."
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+
+        <!-- Ссылка на список тредов -->
+        <div class="mt-4">
+            <a th:href="@{/forum}" class="btn btn-secondary">Вернуться к списку тредов</a>
+        </div>
+    </div>
+</body>
+</html>

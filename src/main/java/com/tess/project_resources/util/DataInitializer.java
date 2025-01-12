@@ -35,13 +35,13 @@ public class DataInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void initData() {
         // Создание ролей
-        createRoleIfNotFound("ROLE_USER");
-        createRoleIfNotFound("ROLE_ADMIN");
+        createRoleIfNotFound("USER");
+        createRoleIfNotFound("ADMIN");
 
         // Создание пользователей
         createUserIfNotFound("admin12345", "admin@gmail.com", "admin12345", roleService.getAllRoles());
         createUserIfNotFound("user12345", "user12345@gmail.com", "user12345",
-                roleService.getRoleByName("ROLE_USER").stream().toList());
+                roleService.getRoleByName("USER").stream().toList());
 
         // Создание типов проектов
         createProjectTypeIfNotFound("Веб-сайт", "Проекты, связанные с разработкой веб-сайтов.");

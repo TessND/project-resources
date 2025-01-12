@@ -47,8 +47,8 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Назначаем роль ROLE_USER по умолчанию
-        user.setRoles(Collections.singletonList(roleService.getRoleByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Роль ROLE_USER не найдена"))));
+        user.setRoles(Collections.singletonList(roleService.getRoleByName("USER")
+                .orElseThrow(() -> new RuntimeException("Роль USER не найдена"))));
 
         return userRepository.save(user);
     }

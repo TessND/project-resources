@@ -22,7 +22,6 @@ public class ForumThreadController {
     @Autowired
     private UserService userService;
 
-
     @Autowired
     private ForumMessageService forumMessageService;
 
@@ -73,6 +72,10 @@ public class ForumThreadController {
     public String getThreadDetails(
             @PathVariable Long threadId,
             Model model) {
+        if (threadId == null) {
+            throw new IllegalArgumentException("ID треда не может быть null");
+        }
+
         ForumThread thread = forumThreadService.getThreadById(threadId);
         List<ForumMessage> messages = forumMessageService.getMessagesByThreadId(threadId);
 

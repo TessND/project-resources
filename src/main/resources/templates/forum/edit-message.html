@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Редактировать сообщение</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Редактировать сообщение</h1>
+
+        <!-- Отображение ошибок валидации -->
+        <div th:if="${errors != null}" class="alert alert-danger" role="alert">
+            <ul>
+                <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+            </ul>
+        </div>
+
+        <!-- Форма редактирования сообщения -->
+        <form th:action="@{/forum/messages/edit/{messageId}(messageId=${message.id})}" method="post" th:object="${messageDTO}">
+            <div class="mb-3">
+                <label for="text" class="form-label">Текст сообщения</label>
+                <textarea
+                    class="form-control"
+                    id="text"
+                    th:field="*{text}"
+                    required
+                ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+</body>
+</html>
