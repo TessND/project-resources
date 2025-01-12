@@ -18,4 +18,7 @@ public class ProjectDTO {
 
     private List<MultipartFile> images; // Список загружаемых изображений
     private List<MultipartFile> files; // Список загружаемых файлов
+
+    private Long projectTypeId; // ID типа проекта
+
 }

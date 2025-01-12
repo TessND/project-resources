@@ -25,6 +25,16 @@
                         <div th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></div>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="projectType" class="form-label">Тип проекта</label>
+                        <select class="form-control" id="projectType" name="projectTypeId" required>
+                            <option th:each="type : ${projectTypes}"
+                                    th:value="${type.id}"
+                                    th:text="${type.name}">
+                            </option>
+                        </select>
+                    </div>
+
                     <!-- Поле для загрузки изображений -->
                     <div class="mb-3">
                         <label for="images" class="form-label">Изображения:</label>

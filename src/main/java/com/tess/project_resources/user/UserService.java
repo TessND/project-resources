@@ -99,9 +99,23 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Находит пользователя по ID.
+     *
+     * @param id ID пользователя.
+     * @return Найденный пользователь.
+     * @throws RuntimeException Если пользователь не найден.
+     */
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Пользователь с ID " + id + " не найден"));
+    }
+
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
+
 
     /**
      * Проверяет, существует ли пользователь с таким email.
