@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tess.project_resources.user.User;
-import com.tess.project_resources.user.UserService;
+import com.tess.project_resources.user.UserRepository;
 import com.tess.project_resources.user.role.Role;
 import com.tess.project_resources.user.role.RoleService;
 import com.tess.project_resources.project.ProjectType;
@@ -21,15 +22,17 @@ public class DataInitializer {
     private RoleService roleService;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository; // Репозиторий для пользователей
 
     @Autowired
     private ProjectTypeRepository projectTypeRepository; // Репозиторий для типов проектов
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Кодировщик паролей
+
     /**
      * Метод запускается после старта приложения.
-     * Проверяет, есть ли в базе данных необходимые роли, пользователи и типы
-     * проектов,
+     * Проверяет, есть ли в базе данных необходимые роли, пользователи и типы проектов,
      * и создает их, если их нет.
      */
     @EventListener(ApplicationReadyEvent.class)
@@ -74,13 +77,13 @@ public class DataInitializer {
      * @param roles    Список ролей пользователя.
      */
     private void createUserIfNotFound(String username, String email, String password, List<Role> roles) {
-        if (!userService.findByUsername(username).isPresent()) {
+        if (!userRepository.findByUsername(username).isPresent()) {
             User user = new User();
             user.setUsername(username);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password)); // Закодируйте пароль
             user.setEmail(email);
             user.setRoles(roles);
-            userService.registerUser(user);
+            userRepository.save(user); // Сохраняем пользователя напрямую
             System.out.println("Пользователь " + username + " создан.");
         } else {
             System.out.println("Пользователь " + username + " уже существует.");

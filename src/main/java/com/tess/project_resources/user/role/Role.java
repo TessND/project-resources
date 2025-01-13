@@ -16,8 +16,7 @@ public class Role {
     private Long id;
 
     @NotBlank(message = "Название роли обязательно")
-    @Size(min = 6, max = 50, message = "Название роли должно быть от 6 до 50 символов")
-    @Pattern(regexp = "^ROLE_[A-Z]+$", message = "Название роли должно начинаться с 'ROLE_' и содержать только заглавные буквы")
+    @Size(max = 50, message = "Название роли должно быть от 6 до 50 символов")
     private String name;
 
 }
